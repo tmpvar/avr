@@ -1,0 +1,29 @@
+{
+  "name": "avr",
+  "version": "0.0.0",
+  "description": "avr project tools",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/tmpvar/avr.git"
+  },
+  "keywords": [
+    "avr"
+  ],
+  "author": "Elijah Insua <tmpvar@gmail.com>",
+  "license": "MIT",
+  "readmeFilename": "readme.md",
+  "gitHead": "a1e580e8b02a8f1710d8398b8b8bae8223afdd63",
+  "dependencies": {
+    "optimist": "~0.5.0",
+    "request": "~2.21.0",
+    "mkdirp": "~0.3.5",
+    "rimraf": "~2.1.4",
+    "async": "~0.2.8",
+    "cpr": "~0.1.0",
+    "tar": "~0.1.17"
+  }
+}

@@ -25,12 +25,14 @@ if (!argv._.length || !commands[command]) {
     '   avr install <../path/to/library> - install from local filesystem',
     '   avr install <user>/<project>[@rev|tag] - install from github',
     '',
-    ' * build - as setup in makefile',
+    ' * delete - remove dep',
     '',
-    ' * flash - as setup in makefile',
+    ' * build',
+    '',
+    ' * flash',
     ''
   ].join('\n') + '\n');
   return;
 }
 
-commands[command](argv, config);
+commands[command].call(commands, argv, config);

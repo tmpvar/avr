@@ -33,7 +33,25 @@ module.exports = function(argv, config) {
 
   // Github repo
   var matches = r.match(/^([a-z0-9_\-]+\/[a-z0-9_\-]+)@?(.+)?/)
-  if (matches) {
+  var exists = true;
+
+  try {
+    fs.statSync(path.resolve(process.cwd(), r));
+  } catch (e) {
+    exists = false;
+  }
+
+  var rename = function(pathTo) {
+    var avr = require(path.join(pathTo, 'avr.json'));
+
+    fs.renameSync(
+      pathTo,
+      path.join(depsDir, avr.name)
+    );
+  }
+
+
+  if (!exists && matches) {
     var at = (matches[2] || 'master');
     var target = path.join(
       depsDir,
@@ -43,15 +61,12 @@ module.exports = function(argv, config) {
     var url = 'https://github.com/' + matches[1] + '/archive/';
     url += at + '.tar.gz'
 
+
     request(url)
       .pipe(zlib.createGunzip())
       .pipe(tar.Extract({ path : depsDir }))
       .on('end', function() {
-        fs.renameSync(
-          target,
-          path.join(depsDir, path.basename(matches[1]))
-        );
-
+        rename(target);
       });
 
   // Local Dir
@@ -67,6 +82,8 @@ module.exports = function(argv, config) {
       try {
         rimraf.sync(path.join(t, '.git'))
       } catch (e) {}
+
+      rename(t);
 
     });
   }

@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 var commands = require('../commands'),
     argv = require('optimist').argv,
     path = require('path'),
@@ -23,7 +24,7 @@ if (!argv._.length || !commands[command]) {
     '',
     ' * install',
     '   avr install <../path/to/library> - install from local filesystem',
-    '   avr install <user>/<project>[@rev|tag] - install from github',
+    '   avr install <user>/<project>[@tag] - install from github',
     '',
     ' * delete - remove dep',
     '',

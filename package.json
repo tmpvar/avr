@@ -1,12 +1,12 @@
 {
   "name": "avr",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "avr project tools",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin" : {
-    "avr" : "/index.js"
+    "avr" : "bin/index.js"
   },
   "repository": {
     "type": "git",

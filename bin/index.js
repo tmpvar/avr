@@ -36,4 +36,20 @@ if (!argv._.length || !commands[command]) {
   return;
 }
 
-commands[command].call(commands, argv, config);
+function run(file) {
+  if (!file || file.match(/\.h|\.c/)) {
+    commands[command].call(commands, argv, config);
+  }
+}
+
+if (argv.w) {
+  var watcher = require('hound').watch(process.cwd());
+  watcher.on('create', run);
+  watcher.on('delete', run);
+  watcher.on('change', run);
+
+  process.on('uncaughtException', function(e) {
+    console.log(e);
+  });
+}
+run();

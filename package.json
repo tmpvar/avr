@@ -5,8 +5,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "bin" : {
-    "avr" : "bin/index.js"
+  "bin": {
+    "avr": "bin/index.js"
   },
   "repository": {
     "type": "git",
@@ -26,6 +26,7 @@
     "rimraf": "~2.1.4",
     "async": "~0.2.8",
     "cpr": "~0.1.0",
-    "tar": "~0.1.17"
+    "tar": "~0.1.17",
+    "hound": "~1.0.4"
   }
 }

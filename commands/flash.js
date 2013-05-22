@@ -9,10 +9,20 @@ module.exports = function(argv, config) {
 
   this.build(argv, config, function() {
     console.log('FLASHING');
+
+    var args = avr.programmer.split(' ').concat([
+      '-U',
+      'flash:w:' + path.join(process.cwd(), 'build', 'main.hex') + ':i'
+    ]);
+
+    if (argv.v) {
+      args.push('-v');
+      args.push('-v');
+    }
+
     spawn(
       'avrdude',
-      avr.programmer.split(' ')
-        .concat(['-U', 'flash:w:build/main.hex:i', '-v', '-v']),
+      args,
       { stdio: 'inherit' }
     );
   });

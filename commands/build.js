@@ -1,35 +1,46 @@
-var exec = require('child_process').exec,
+var child_process = require('child_process'),
+    exec = child_process.exec,
     path = require('path'),
     fs = require('fs'),
     async = require('async'),
     rimraf = require('rimraf'),
+    buildDir = path.join(process.cwd(), 'build'),
     objects = [],
-    includes = [];
+    includes = [],
+    verbose;
 
+var gcc = function(config, extend) {
+  return [
+    'avr-gcc',
+    '-DF_CPU=' + config.hertz,
+    '-mmcu=' + config.device,
+  ].concat(extend)
+}
 
 var compile = function(source, config, fn) {
   var out = path.join(process.cwd(), 'build', source.replace('deps/','').replace('/', '-').replace('.c', '.o'));
   console.log('  ' + source.replace(process.cwd(), '').replace('deps/',''));
 
-  var gcc = [
-    'avr-gcc',
+  var s = gcc(config, [
     '-c',
     path.join(process.cwd(), source),
-    '-DF_CPU=' + config.hertz,
-    '-mmcu=' + config.device,
-    '-o',
+     '-o',
     out,
     '-I' + path.join(process.cwd(), 'deps')
-  ].concat(config.cflags);
+  ]).concat(config.cflags).join(' ');
 
-  exec(gcc.join(' '), fn);
+  if (verbose) {
+    console.log(s);
+  }
+
+  exec(s, fn);
 
   objects.push(out);
 }
 
 
 module.exports = function(argv, config, finalCallback) {
-
+  verbose = !!argv.v;
 
   var avrPath = path.join(process.cwd(), 'avr.json');
 
@@ -77,15 +88,29 @@ module.exports = function(argv, config, finalCallback) {
     }
 
     console.log('LINKING')
-    exec('avr-gcc -o build/main.elf ' + objects.join(' '), function(err) {
+
+    var s = gcc(avr, [
+      '-o ' + path.join(buildDir, 'main.elf'),
+    ].concat(objects)).join(' ');
+
+    if (verbose) {
+      console.log(s);
+    }
+
+    exec(s, function(err) {
       if (err) {
         throw err;
       }
 
       async.eachSeries([
-        'avr-objcopy -j .text -j .data -O ihex build/main.elf build/main.hex',
-        'avr-size --format=avr --mcu=$(DEVICE) build/main.elf',
-      ], exec, function(err) {
+        'avr-objcopy -j .text -j .data -O ihex ' + path.join(buildDir, 'main.elf') + ' ' + path.join(buildDir, 'main.hex'),
+        'avr-size --format=avr --mcu=' + avr.device + ' ' + path.join(buildDir, 'main.elf'),
+      ], function(line, fn) {
+        exec(line, function(err, so, se) {
+          console.log(so);
+          fn(err);
+        });
+      }, function(err) {
         if (err) {
           throw err;
         }

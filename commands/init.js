@@ -1,6 +1,7 @@
 var path = require('path'),
     fs = require('fs'),
-    mkdirp = require('mkdirp');
+    mkdirp = require('mkdirp'),
+    exec = require('child_process').exec;
 
 var json = {
   name : "default project name",
@@ -26,6 +27,11 @@ var main = [
 ''
 ].join('\n')
 
+var gitignore = [
+  '.DS_Store',
+  'build'
+].join('\n');
+
 
 module.exports = function(argv, config) {
 
@@ -39,9 +45,22 @@ module.exports = function(argv, config) {
   }
 
   fs.writeFileSync(path.join(projectDir, 'main.c'), main);
+  fs.writeFileSync(path.join(projectDir, '.gitignore'), gitignore);
+  fs.writeFileSync(path.join(projectDir, 'readme.md'), '# ' + json.name + '\n');
 
   fs.writeFileSync(
     path.join(projectDir, 'avr.json'),
     JSON.stringify(json, null, '  ')
+  );
+
+  exec(
+    'git init . && git add . && git commit -m "initial"',
+    { cwd : projectDir },
+    function(err) {
+      if (err) {
+        console.log(arguments);
+        throw err;
+      }
+    }
   );
 }
